@@ -1,74 +1,99 @@
-void setup(){
-  size(600,600);
+World WD = new World();
+String[] Map;
+
+void setup() {
+  size(600, 600);
 }
 
-void draw(){
+void draw() {
+WD.getMaxX();
+WD.getMaxY();
+  WD.draw();
 }
 
-class World{
-  int worldWidth, worldHeight;
+class World {
+  int maxX, maxY,Col;
+  
   //int[][] block;
-  
-  World(){
+
+  void draw() {
+    int X= 600/maxX;
+    int Y= 600/maxY;
+    for (int i =0; i < (maxX ); i = i+1) {
+      for (int j = 0; j < (maxY ); j = j+1) {
+        if(WD.getMap(i,j) == true){
+          Col = 250;
+        }else{
+        Col = 0; 
+      }
+        fill(Col);
+        rect(i*X, j*Y, X, Y);
+      }
+    }
   }
-  
-  void draw(){
+
+  void getMaxX() {
+    Map = loadStrings("Map.txt");
+    String[] mapread = split(Map[0], ',');
+    maxX = mapread.length;
   }
-  
-  boolean canWalk(){
-    return true;
+
+  void getMaxY() {
+    Map = loadStrings("Map.txt");
+    String[] mapread = split(Map[0], ',');
+    String[] block = split(mapread[Y], '-');
+    maxY = block.length;
+  }
+  boolean getMap(int X, int Y) {
+    Map = loadStrings("Map.txt");
+    String[] mapread = split(Map[0], ',');
+    String[] block = split(mapread[Y], '-');
+
+    return(boolean(int(block[X])));
   }
 }
 
-class Robot{
+class Robot {
   float posX, posY, distance;
   int direction;
-  
-  Robot(){
+
+  Robot() {
   }
-  
-  void draw(){
+
+  void draw() {
   }
-  
-  void move(){
-  }
-  
-  boolean calDirection(){
-    return true;
-  }
-  
-  boolean calDistance(){
-    return true;
+
+  void move() {
   }
 }
 
-class Target{
+class Target {
   float posX, posY;
-  
-  Target(){
+
+  Target() {
   }
-  
-  void draw(){
+
+  void draw() {
   }
-  
-  float getPosX(){
+
+  float getPosX() {
     return posX;
   }
-  
-  float getPosY(){
+
+  float getPosY() {
     return posY;
   }
 }
 
-class Obstruction{
+class Obstruction {
   int size;
   float posX, posY;
   //int[][] walls;
-  
-  void draw(){
+
+  void draw() {
   }
-  
-  boolean block(){
+
+  boolean block() {
     return true;
-  } 
+  }
 }
