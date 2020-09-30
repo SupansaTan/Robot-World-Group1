@@ -1,7 +1,8 @@
 World WD = new World();
-Robot RD= new Robot();
+Robot RB= new Robot();
 Target TG = new Target();
 String[] Map;
+  int i;
 
 void polygon(float x, float y, float radius, int npoints) {
   float angle = TWO_PI / npoints;
@@ -16,19 +17,35 @@ void polygon(float x, float y, float radius, int npoints) {
 
 void setup() {
   size(600, 600);
+ i = 0;
 }
 
 void draw() {
-WD.getMaxX();
-WD.getMaxY();
+  WD.getMaxX();
+  WD.getMaxY();
+if(i> 0){
+background(0); 
+WD.draw();
+
+  TG.draw(3, 3);
+
+  delay(1000);
+  RB.moveLeft();
+}else{
+
+  background(0); 
   WD.draw();
-  RD.draw(0,0);
-  TG.draw(3,3);
+  RB.draw(2, 0);
+
+
+  TG.draw(3, 3);
+}
+i +=1;
 }
 
 class World {
-  int maxX, maxY,Col;
-  
+  int maxX, maxY, Col;
+
   //int[][] block;
 
   void draw() {
@@ -36,11 +53,11 @@ class World {
     int Y= 600/maxY;
     for (int i =0; i < (maxX ); i = i+1) {
       for (int j = 0; j < (maxY ); j = j+1) {
-        if(WD.getMap(i,j) == true){
+        if (WD.getMap(i, j) == true) {
           Col = 250;
-        }else{
-        Col = 0; 
-      }
+        } else {
+          Col = 0;
+        }
         fill(Col);
         rect(i*X, j*Y, X, Y);
       }
@@ -71,30 +88,54 @@ class World {
 }
 
 class Robot {
-  int distance;
   int direction;
-
+  int posiX, posiY;
   Robot() {
   }
 
-  void draw(int posiX,int posiY) {
-    fill(0,0,255);
-     triangle(float((600/WD.getMaxX()*posiX)+600/WD.getMaxX()/2),float(600/WD.getMaxY()*posiY),float(600/WD.getMaxX()*posiX),float(600/WD.getMaxY()*(posiY+1)),float(600/WD.getMaxX()*(posiX+1)), float(600/WD.getMaxY()*(posiY+1)));
-   fill(0);
-}
+  void draw(int posX, int posY) {
+    posiX = posX;
+    posiY = posY;
+    fill(0, 0, 255);
+    triangle(float((600/WD.getMaxX()*posiX)+600/WD.getMaxX()/2), float(600/WD.getMaxY()*posiY), float(600/WD.getMaxX()*posiX), float(600/WD.getMaxY()*(posiY+1)), float(600/WD.getMaxX()*(posiX+1)), float(600/WD.getMaxY()*(posiY+1)));
+    fill(0);
+  }
 
-  void move() {
+  void moveUp() {
+    posiY -= 1;
+    RB.draw(posiX, posiY);
+  }
+  void moveDown() {
+    posiY += 1;
+
+    fill(0, 0, 255);
+    triangle(float((600/WD.getMaxX()*posiX)+600/WD.getMaxX()/2), float(600/WD.getMaxY()*(posiY+1)), float(600/WD.getMaxX()*posiX), float(600/WD.getMaxY()*posiY), float(600/WD.getMaxX()*(posiX+1)), float(600/WD.getMaxY()*posiY));
+    fill(0);
+  }
+
+  void moveLeft() {
+    posiX -= 1;
+
+    fill(0, 0, 255);
+    triangle(float(600/WD.getMaxX()*(posiX+1)), float(600/WD.getMaxY()*posiY+1), float(600/WD.getMaxX()*(posiX)), float((600/WD.getMaxY()*posiY)+600/WD.getMaxX()/2), float(600/WD.getMaxX()*(posiX+1)), float(600/WD.getMaxY()*(posiY+1)));
+    fill(0);
+  }
+  void moveRight() {
+    posiX += 1;
+
+    fill(0, 0, 255);
+    triangle(float(600/WD.getMaxX()*posiX), float(600/WD.getMaxY()*posiY), float(600/WD.getMaxX()*(posiX+1)), float((600/WD.getMaxY()*posiY)+600/WD.getMaxX()/2), float(600/WD.getMaxX()*(posiX)), float(600/WD.getMaxY()*(posiY+1)));
+    fill(0);
   }
 }
 
 class Target {
- int posX, posY;
-  void draw(int posX,int posY) {
-        fill(255,0,0);
-  polygon((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2,(600/WD.getMaxY()*posY)+600/WD.getMaxY()/2,600/WD.getMaxX()/2, 8);
-  fill(0);
-
-}
+  int posX, posY;
+  void draw(int posX, int posY) {
+    fill(255, 0, 0);
+    polygon((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2, (600/WD.getMaxY()*posY)+600/WD.getMaxY()/2, 600/WD.getMaxX()/2, 8);
+    fill(0);
+  }
 
   int getPosX() {
     return posX;
@@ -114,7 +155,7 @@ class Obstruction {
   }
 
   boolean block() {
-    
+
     return true;
   }
 }
