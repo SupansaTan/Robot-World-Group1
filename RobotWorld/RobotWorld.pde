@@ -1,4 +1,6 @@
 World WD = new World();
+Robot robot = new Robot();
+Target target = new Target();
 String[] Map;
 
 void setup() {
@@ -9,6 +11,9 @@ void draw() {
 WD.getMaxX();
 WD.getMaxY();
   WD.draw();
+  
+  robot.draw();
+  target.draw();
 }
 
 class World {
@@ -61,6 +66,8 @@ class Robot {
   }
 
   void draw() {
+    fill(255,255,0);
+    triangle(187.5,112.5,262.5,112.5,225,37.5);
   }
 
   void move() {
@@ -74,6 +81,9 @@ class Target {
   }
 
   void draw() {
+    fill(255,255,0);
+    translate(525,375);
+    polygon(0, 0, 37.5, 8);
   }
 
   float getPosX() {
@@ -82,6 +92,18 @@ class Target {
 
   float getPosY() {
     return posY;
+  }
+  
+  // method that make any shape
+  void polygon(float x, float y, float radius, int npoints) {
+    float angle = TWO_PI / npoints;
+    beginShape();
+    for (float a = 0; a < TWO_PI; a += angle) {
+      float sx = x + cos(a) * radius;
+      float sy = y + sin(a) * radius;
+      vertex(sx, sy);
+    }
+    endShape(CLOSE);
   }
 }
 
