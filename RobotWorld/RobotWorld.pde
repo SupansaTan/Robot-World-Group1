@@ -1,7 +1,6 @@
-World WD = new World();
-Robot RD= new Robot();
-Target TG = new Target();
-String[] Map;
+World WD;
+Robot RD;
+Target TG;
 
 void polygon(float x, float y, float radius, int npoints) {
   float angle = TWO_PI / npoints;
@@ -16,33 +15,43 @@ void polygon(float x, float y, float radius, int npoints) {
 
 void setup() {
   size(600, 600);
+  WD = new World();
+  RD = new Robot();
+  TG = new Target();
 }
 
 void draw() {
-WD.getMaxX();
-WD.getMaxY();
+  fill(0);
   WD.draw();
-  RD.draw(0,0);
+  RD.draw();
   TG.draw(3,3);
 }
 
 class World {
-  int maxX, maxY,Col;
+  int maxX, maxY; // maximum of both position x and y
+  int Color; 
+  String[] Map;
   
-  //int[][] block;
+  World(){
+    maxX = this.getMaxX();
+    maxY = this.getMaxY();
+  }
 
   void draw() {
-    int X= 600/maxX;
-    int Y= 600/maxY;
+    int X = 600/maxX;
+    int Y = 600/maxY;
     for (int i =0; i < (maxX ); i = i+1) {
       for (int j = 0; j < (maxY ); j = j+1) {
         if(WD.getMap(i,j) == true){
-          Col = 250;
-        }else{
-        Col = 0; 
-      }
-        fill(Col);
+          Color = 250; // this block can walk
+        }
+        else{
+          Color = 0; // this block can't walk 
+        }
+        fill(Color);
+        strokeWeight(2);
         rect(i*X, j*Y, X, Y);
+        strokeWeight(0);
       }
     }
   }
@@ -61,6 +70,7 @@ class World {
     maxY = block.length;
     return maxY;
   }
+  
   boolean getMap(int X, int Y) {
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
@@ -71,30 +81,36 @@ class World {
 }
 
 class Robot {
-  int distance;
-  int direction;
+  float posX, posY, direction;
 
   Robot() {
+    posX = (int)random(WD.getMaxX());
+    posY = (int)random(WD.getMaxY());
   }
 
-  void draw(int posiX,int posiY) {
+  void draw() {
     fill(0,0,255);
-     triangle(float((600/WD.getMaxX()*posiX)+600/WD.getMaxX()/2),float(600/WD.getMaxY()*posiY),float(600/WD.getMaxX()*posiX),float(600/WD.getMaxY()*(posiY+1)),float(600/WD.getMaxX()*(posiX+1)), float(600/WD.getMaxY()*(posiY+1)));
-   fill(0);
-}
+    triangle((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2, 600/WD.getMaxY()*posY, 600/WD.getMaxX()*posX, 600/WD.getMaxY()*(posY+1), 600/WD.getMaxX()*(posX+1), 600/WD.getMaxY()*(posY+1));
+  }
 
   void move() {
   }
+  
 }
 
 class Target {
- int posX, posY;
+  int posX, posY;
+  
+  Target(){
+    posX = (int)random(WD.getMaxX());
+    posY = (int)random(WD.getMaxY());
+  }
+  
   void draw(int posX,int posY) {
-        fill(255,0,0);
-  polygon((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2,(600/WD.getMaxY()*posY)+600/WD.getMaxY()/2,600/WD.getMaxX()/2, 8);
-  fill(0);
-
-}
+    fill(255,0,0);
+    polygon((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2, (600/WD.getMaxY()*posY)+600/WD.getMaxY()/2, 600/WD.getMaxX()/2.5, 8);
+    fill(0);
+  }
 
   int getPosX() {
     return posX;
@@ -108,13 +124,12 @@ class Target {
 class Obstruction {
   int size;
   float posX, posY;
-  //int[][] walls;
 
-  void draw() {
+  void draw(){
   }
 
-  boolean block() {
-    
+  boolean hasBarrier(int posX, int posY){
+    // check that position has barrier or not
     return true;
   }
 }
