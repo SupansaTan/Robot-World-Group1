@@ -90,8 +90,11 @@ class Robot {
 class Target {
  int posX, posY;
   void draw(int posX,int posY) {
-  polygon((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2,(600/WD.getMaxY()*posY)+600/WD.getMaxY()/2,600/WD.getMaxX(), 8);
-  }
+        fill(255,0,0);
+  polygon((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2,(600/WD.getMaxY()*posY)+600/WD.getMaxY()/2,600/WD.getMaxX()/2, 8);
+  fill(0);
+
+}
 
   int getPosX() {
     return posX;
