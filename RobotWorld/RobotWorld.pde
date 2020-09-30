@@ -1,30 +1,34 @@
 World WD;
-Robot RD;
+Robot RB;
 Target TG;
 
 void polygon(float x, float y, float radius, int npoints) {
+  // method for make any shape
+  
   float angle = TWO_PI / npoints;
   beginShape();
+  
   for (float a = 0; a < TWO_PI; a += angle) {
     float sx = x + cos(a) * radius;
     float sy = y + sin(a) * radius;
     vertex(sx, sy);
   }
+  
   endShape(CLOSE);
 }
 
-void setup() {
+void setup(){
   size(600, 600);
   WD = new World();
-  RD = new Robot();
+  RB = new Robot();
   TG = new Target();
 }
 
-void draw() {
-  fill(0);
+void draw(){
+  background(0);
   WD.draw();
-  RD.draw();
-  TG.draw(3,3);
+  RB.draw();
+  TG.draw();
 }
 
 class World {
@@ -36,7 +40,7 @@ class World {
     maxX = this.getMaxX();
     maxY = this.getMaxY();
   }
-
+  
   void draw() {
     int X = 600/maxX;
     int Y = 600/maxY;
@@ -48,6 +52,7 @@ class World {
         else{
           Color = 0; // this block can't walk 
         }
+        
         fill(Color);
         strokeWeight(2);
         rect(i*X, j*Y, X, Y);
@@ -88,14 +93,41 @@ class Robot {
     posY = (int)random(WD.getMaxY());
   }
 
-  void draw() {
+  void draw(){
+    if(keyPressed){
+      // when pressed button
+      this.move();
+    }
+    
     fill(0,0,255);
-    triangle((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2, 600/WD.getMaxY()*posY, 600/WD.getMaxX()*posX, 600/WD.getMaxY()*(posY+1), 600/WD.getMaxX()*(posX+1), 600/WD.getMaxY()*(posY+1));
+    triangle((600/WD.getMaxX()*this.posX)+600/WD.getMaxX()/2, 600/WD.getMaxY()*this.posY, 600/WD.getMaxX()*this.posX, 600/WD.getMaxY()*(this.posY+1), 600/WD.getMaxX()*(this.posX+1), 600/WD.getMaxY()*(this.posY+1));
   }
 
-  void move() {
+  void move(){
+    switch(keyCode){
+      // when pressed arrow button
+      
+      case UP:
+        // move forward
+        this.posY -= 1;
+        break;
+        
+      case DOWN:
+        // move backward
+        this.posY += 1;
+        break;
+        
+      case LEFT:
+        // move left
+        this.posX -= 1;
+        break;
+        
+      case RIGHT:
+        // move right
+        this.posX += 1;
+        break;
+    }  
   }
-  
 }
 
 class Target {
@@ -106,29 +138,27 @@ class Target {
     posY = (int)random(WD.getMaxY());
   }
   
-  void draw(int posX,int posY) {
+  void draw() {
     fill(255,0,0);
-    polygon((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2, (600/WD.getMaxY()*posY)+600/WD.getMaxY()/2, 600/WD.getMaxX()/2.5, 8);
-    fill(0);
+    polygon((600/WD.getMaxX()*this.posX)+600/WD.getMaxX()/2, (600/WD.getMaxY()*this.posY)+600/WD.getMaxY()/2, 600/WD.getMaxX()/2.5, 8);
   }
 
   int getPosX() {
-    return posX;
+    return this.posX;
   }
 
   int getPosY() {
-    return posY;
+    return this.posY;
   }
 }
 
 class Obstruction {
-  int size;
-  float posX, posY;
+  int row, col, size;
 
   void draw(){
   }
 
-  boolean hasBarrier(int posX, int posY){
+  boolean hasBarrier(int row, int column){
     // check that position has barrier or not
     return true;
   }
