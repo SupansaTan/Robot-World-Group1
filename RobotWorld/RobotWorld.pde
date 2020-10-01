@@ -1,6 +1,7 @@
 World WD;
 Robot RB;
 Target TG;
+Obstruction[] barrier = new Obstruction[5];
 
 void polygon(float x, float y, float radius, int npoints) {
   // method for make any shape
@@ -22,6 +23,11 @@ void setup(){
   WD = new World();
   RB = new Robot();
   TG = new Target();
+  
+  // create all obstruction 
+  for(int i=0; i < 5; i++){
+    barrier[i] = new Obstruction(WD.getSize());
+  }
 }
 
 void draw(){
@@ -29,24 +35,24 @@ void draw(){
   WD.draw();
   RB.draw();
   TG.draw();
+  
+  for(Obstruction br : barrier){
+      br.draw();
+  }
 }
 
 class World {
   int maxX, maxY; // maximum of both position x and y
-  int Color; 
+  int Color, size; 
   String[] Map;
   IntList rowsWhite = new IntList();
   IntList colsWhite = new IntList();
-  Obstruction[] barrier = new Obstruction[5];
   
   World(){
     maxX = this.getMaxX();
     maxY = this.getMaxY();
-    
-    // create all obstruction 
-    for(int i=0; i < 5; i++){
-      barrier[i] = new Obstruction(maxX, maxY);
-    }
+    this.blockWhite();
+    size = rowsWhite.size();
   }
   
   void draw() {
@@ -56,8 +62,6 @@ class World {
       for (int j = 0; j < (maxY ); j = j+1) {
         if(WD.getMap(i,j) == true){
           Color = 250; // this block can walk
-          rowsWhite.append(i);
-          colsWhite.append(j);
         }
         else{
           Color = 0; // this block can't walk 
@@ -69,10 +73,7 @@ class World {
         strokeWeight(0);
       }
     }
-    
-    for(Obstruction br : barrier){
-      br.draw();
-    }
+
   }
 
   int getMaxX() {
@@ -98,14 +99,46 @@ class World {
     return(boolean(int(block[X])));
   }
   
+  void blockWhite(){
+    // contains row and column that the robot can walk 
+    for(int i=0; i<maxX; i++){
+      for(int j=0; j<maxY; j++){
+        if(this.getMap(i,j)){
+          rowsWhite.append(i);
+          colsWhite.append(j);
+        }
+      }
+    }
+  }
+  
+  int getRowWhite(int index){
+    return rowsWhite.get(index);
+  }
+  
+  int getColWhite(int index){
+    return colsWhite.get(index);
+  }
+  
+  int getSize(){
+    return size;
+  }
+  
+  void deleteList(int index){
+    rowsWhite.remove(index);
+    colsWhite.remove(index);
+    this.size -= 1;
+  }
 }
 
 class Robot {
-  int posX, posY, direction;
+  int posX, posY, direction, rand;
   
   Robot() {
-    posX = (int)random(WD.getMaxX());
-    posY = (int)random(WD.getMaxY());
+    rand = (int)random(WD.getSize());
+    WD.deleteList(rand);
+    posX = WD.getRowWhite(rand);
+    posY = WD.getColWhite(rand);
+    WD.deleteList(rand);
     direction = 0;
   }
 
@@ -160,13 +193,16 @@ class Robot {
 
 class Target {
   int posX, posY;
+  int rand; // random index 
   
   Target(){
-    posX = (int)random(WD.getMaxX());
-    posY = (int)random(WD.getMaxY());
+    rand = (int)random(WD.getSize());
+    posX = WD.getRowWhite(rand);
+    posY = WD.getColWhite(rand);
+    WD.deleteList(rand);
   }
   
-  void draw() {
+  void draw(){
     fill(255,0,0);
     polygon((600/WD.getMaxX()*this.posX)+600/WD.getMaxX()/2, (600/WD.getMaxY()*this.posY)+600/WD.getMaxY()/2, 600/WD.getMaxX()/2.5, 8);
   }
@@ -181,11 +217,13 @@ class Target {
 }
 
 class Obstruction {
-  int row, col, size;
+  int row, col, size, rand;
   
-  Obstruction(int rowMax, int colMax){
-    row = (int)random(rowMax);
-    col = (int)random(colMax);
+  Obstruction(int sizeList){
+    rand = (int)random(sizeList);
+    row = WD.getRowWhite(rand);
+    col = WD.getColWhite(rand);
+    WD.deleteList(rand);
     size = 50;
   }
 
