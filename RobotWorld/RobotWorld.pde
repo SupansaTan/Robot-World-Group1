@@ -1,7 +1,4 @@
-World WD;
-Robot RB;
-Target TG;
-Obstruction[] barrier = new Obstruction[5];
+World world;
 
 void polygon(float x, float y, float radius, int npoints) {
   // method for make any shape
@@ -20,25 +17,34 @@ void polygon(float x, float y, float radius, int npoints) {
 
 void setup(){
   size(600, 600);
-  WD = new World();
-  RB = new Robot();
-  TG = new Target();
+  world = new World();
+  world.robot = new Robot();
+  world.target = new Target();
   
   // create all obstruction 
   for(int i=0; i < 5; i++){
-    barrier[i] = new Obstruction(WD.getSize());
+    world.barriers[i] = new Obstruction(world.getSize());
   }
 }
 
 void draw(){
   background(0);
-  WD.draw();
-  RB.draw();
-  TG.draw();
+  world.draw();
+  world.robot.draw();
+  world.target.draw();
   
-  for(Obstruction br : barrier){
-      br.draw();
+  for(Obstruction barrier : world.barriers){
+      barrier.draw();
   }
+}
+
+void keyPressed(){
+  world.robot.move();
+  world.robot.hasPressedKey = true;
+}
+
+void keyReleased(){
+  world.robot.hasPressedKey = false;
 }
 
 class World {
@@ -48,11 +54,16 @@ class World {
   IntList rowsWhite = new IntList();
   IntList colsWhite = new IntList();
   
+  public Robot robot;
+  public Target target;
+  Obstruction[] barriers;
+  
   World(){
     maxX = this.getMaxX();
     maxY = this.getMaxY();
     this.blockWhite();
     size = rowsWhite.size();
+    barriers = new Obstruction[5]; 
   }
   
   void draw() {
@@ -60,7 +71,7 @@ class World {
     int Y = 600/maxY;
     for (int i =0; i < (maxX ); i = i+1) {
       for (int j = 0; j < (maxY ); j = j+1) {
-        if(WD.getMap(i,j) == true){
+        if(world.getMap(i,j) == true){
           Color = 250; // this block can walk
         }
         else{
@@ -128,66 +139,74 @@ class World {
     colsWhite.remove(index);
     this.size -= 1;
   }
+  
 }
 
 class Robot {
-  int posX, posY, direction, rand;
+  int posX, posY,  rand;
+  float direction;
+  public boolean hasPressedKey = false;
   
   Robot() {
-    rand = (int)random(WD.getSize());
-    WD.deleteList(rand);
-    posX = WD.getRowWhite(rand);
-    posY = WD.getColWhite(rand);
-    WD.deleteList(rand);
-    direction = 0;
+    rand = (int)random(world.getSize());
+    posX = world.getRowWhite(rand);
+    posY = world.getColWhite(rand);
+    world.deleteList(rand);
+    direction = radians(90);
   }
 
   void draw(){
-    if(keyPressed){
-      // when pressed button
-      this.move();
-    }
-
+    
+    // find the center point of the block to be the center of triangle
+    int centerX = (int)((width/world.getMaxX() * (this.posX+1)) - (width/world.getMaxX() * (this.posX)))/2 + (width/world.getMaxX()*this.posX);
+    int centerY = (int)((height/world.getMaxY() * (this.posY+1)) - (height/world.getMaxY() * (this.posY)))/2 + (height/world.getMaxY()*this.posY);
+    
     // set position of head triangle
-    int headPosX = (int)((width/WD.getMaxX()*this.posX)+ (600/WD.getMaxX()/2) - (cos(direction+radians(180))));
-    int headPosY = (int)((height/WD.getMaxY()*this.posY) + height/120 - (sin(direction+radians(180))));
+    float headPosX = centerX - 25 * (cos(direction+radians(0)));
+    float headPosY = centerY - 25 * (sin(direction+radians(0)));
     
     // set position of left triangle
-    int leftPosX = (int)((width/WD.getMaxX() * this.posX) + width/120 - (cos(direction+radians(90))));
-    int leftPosY = (int)((height/WD.getMaxY() * (this.posY+1)) - height/120 - (sin(direction+radians(90))));
+    float leftPosX = centerX - 32 * (cos(direction+radians(135)));
+    float leftPosY = centerY - 32 * (sin(direction+radians(135)));
     
     // set position of right triangle
-    int rightPosX = (int)((width/WD.getMaxX() * (this.posX+1)) - width/120 - (cos(direction+radians(90))));
-    int rightPosY = (int)((height/WD.getMaxY() * (this.posY+1)) - height/120 - (sin(direction+radians(90))));
+    float rightPosX = centerX - 32 * (cos(direction+radians(225)));
+    float rightPosY = centerY - 32 * (sin(direction+radians(225)));;
     
     fill(0,0,255);
     triangle(headPosX, headPosY, leftPosX, leftPosY, rightPosX, rightPosY);
   }
 
   void move(){
-    switch(keyCode){
-      // when pressed arrow button
-      
-      case UP:
-        // move forward
-        this.posY -= 1;
-        break;
+    if(hasPressedKey == false){
+      switch(keyCode){
+        // when pressed arrow button
         
-      case DOWN:
-        // move backward
-        this.posY += 1;
-        break;
-        
-      case LEFT:
-        // move left
-        this.posX -= 1;
-        break;
-        
-      case RIGHT:
-        // move right
-        this.posX += 1;
-        break;
-    }  
+        case UP:
+          // move forward
+          this.posY -= 1;
+          direction = radians(90);
+          break;
+          
+        case DOWN:
+          // move backward
+          this.posY += 1;
+          direction = radians(270);
+          break;
+          
+        case LEFT:
+          // move left
+          this.posX -= 1;
+          direction = radians(0);
+          break;
+          
+        case RIGHT:
+          // move right
+          this.posX += 1;
+          direction = radians(180);
+          break;
+      }  
+    }
   }
 }
 
@@ -196,15 +215,15 @@ class Target {
   int rand; // random index 
   
   Target(){
-    rand = (int)random(WD.getSize());
-    posX = WD.getRowWhite(rand);
-    posY = WD.getColWhite(rand);
-    WD.deleteList(rand);
+    rand = (int)random(world.getSize());
+    posX = world.getRowWhite(rand);
+    posY = world.getColWhite(rand);
+    world.deleteList(rand);
   }
   
   void draw(){
     fill(255,0,0);
-    polygon((600/WD.getMaxX()*this.posX)+600/WD.getMaxX()/2, (600/WD.getMaxY()*this.posY)+600/WD.getMaxY()/2, 600/WD.getMaxX()/2.5, 8);
+    polygon((600/world.getMaxX()*this.posX)+600/world.getMaxX()/2, (600/world.getMaxY()*this.posY)+600/world.getMaxY()/2, 600/world.getMaxX()/2.5, 8);
   }
 
   int getPosX() {
@@ -221,9 +240,9 @@ class Obstruction {
   
   Obstruction(int sizeList){
     rand = (int)random(sizeList);
-    row = WD.getRowWhite(rand);
-    col = WD.getColWhite(rand);
-    WD.deleteList(rand);
+    row = world.getRowWhite(rand);
+    col = world.getColWhite(rand);
+    world.deleteList(rand);
     size = 50;
   }
 
