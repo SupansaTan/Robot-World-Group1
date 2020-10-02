@@ -24,17 +24,22 @@ void setup() {
 void draw() {
   WD.getMaxX();
   WD.getMaxY();
-  if (i> 0) {
+  TG.draw(3, 3);
+  if (TG.met(RB.getX(), RB.getY()) == true) {
+    background(250);
+    textSize(60);
+    text("You Won", 150, 280);
+  }
+  else if (i> 0) {
     background(0); 
     WD.draw();
 
-    TG.draw(3, 3);
+    
     RB.draw();
-  }else if (TG.met(RB.getX(),RB.getY()) == true){
-    text("You Won", width/2 , height/2 );
-  } else {
+    TG.draw(3, 3);
+  }else {
 
-    background(0); 
+    background(0);
     WD.draw();
     RB.initialDraw(0, 0);
 
@@ -195,33 +200,33 @@ class Robot {
         if (WD.getMap(posiX, posiY+1) == true) {
           posiY += 1;
         }
-      } else if (direction ==3) {
-        if (posiX >0) {
-          if (WD.getMap(posiX-1, posiY) == true) {
-            posiX-= 1;
-          }
+      }
+    } else if (direction ==3) {
+      if (posiX > 0) {
+        if (WD.getMap(posiX-1, posiY) == true) {
+          posiX-= 1;
         }
       }
     }
   }
-  int getX(){
+  int getX() {
     return(posiX);
   }
-    int getY(){
+  int getY() {
     return(posiY);
   }
 }
 class Target {
+
   int posX, posY;
-  boolean met(int X, int Y){
-    if(X == posX && Y == posY){
-    return true;
-    }else{
-    return false;
+  boolean met(int X, int Y) {
+    if (X == posX && Y == posY) {
+      return true;
+      
+    } else {
+      
+      return false;
     }
-    
-    
-        
   }
   void draw(int posiX, int posiY) {
     posX= posiX;
@@ -254,12 +259,11 @@ class InputProcessor {
 }
 void keyPressed() {
 
-    if (key == 'w') {
-      IP.control("w");
-    } else if (key == 'a') {
-      IP.control("a");
-    } else if (key == 'd') {
-      IP.control("d");
-    
+  if (key == 'w') {
+    IP.control("w");
+  } else if (key == 'a') {
+    IP.control("a");
+  } else if (key == 'd') {
+    IP.control("d");
   }
 }
