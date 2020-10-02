@@ -1,90 +1,68 @@
-World world;
+World WD = new World();
+Robot RB= new Robot();
+Target TG = new Target();
+InputProcessor IP = new InputProcessor();
+String[] Map;
+int i;
 
 void polygon(float x, float y, float radius, int npoints) {
-  // method for make any shape
-  
   float angle = TWO_PI / npoints;
   beginShape();
-  
   for (float a = 0; a < TWO_PI; a += angle) {
     float sx = x + cos(a) * radius;
     float sy = y + sin(a) * radius;
     vertex(sx, sy);
   }
-  
   endShape(CLOSE);
 }
 
-void setup(){
+void setup() {
   size(600, 600);
-  world = new World();
-  world.robot = new Robot();
-  world.target = new Target();
-  
-  // create all obstruction 
-  for(int i=0; i < 5; i++){
-    world.barriers[i] = new Obstruction(world.getSize());
+  i = 0;
+}
+
+void draw() {
+  WD.getMaxX();
+  WD.getMaxY();
+  if (i> 0) {
+    background(0); 
+    WD.draw();
+
+    TG.draw(3, 3);
+    RB.draw();
+  }else if (TG.met(RB.getX(),RB.getY()) == true){
+    text("You Won", width/2 , height/2 );
+  } else {
+
+    background(0); 
+    WD.draw();
+    RB.initialDraw(0, 0);
+
+
+    TG.draw(3, 3);
   }
-}
-
-void draw(){
-  background(0);
-  world.draw();
-  world.robot.draw();
-  world.target.draw();
-  
-  for(Obstruction barrier : world.barriers){
-      barrier.draw();
-  }
-}
-
-void keyPressed(){
-  world.robot.move();
-  world.robot.hasPressedKey = true;
-}
-
-void keyReleased(){
-  world.robot.hasPressedKey = false;
+  i +=1;
 }
 
 class World {
-  int maxX, maxY; // maximum of both position x and y
-  int Color, size; 
-  String[] Map;
-  IntList rowsWhite = new IntList();
-  IntList colsWhite = new IntList();
-  
-  public Robot robot;
-  public Target target;
-  Obstruction[] barriers;
-  
-  World(){
-    maxX = this.getMaxX();
-    maxY = this.getMaxY();
-    this.blockWhite();
-    size = rowsWhite.size();
-    barriers = new Obstruction[5]; 
-  }
-  
+  int maxX, maxY, Col;
+
+  //int[][] block;
+
   void draw() {
-    int X = 600/maxX;
-    int Y = 600/maxY;
+    int X= 600/maxX;
+    int Y= 600/maxY;
     for (int i =0; i < (maxX ); i = i+1) {
       for (int j = 0; j < (maxY ); j = j+1) {
-        if(world.getMap(i,j) == true){
-          Color = 250; // this block can walk
+        if (WD.getMap(i, j) == true) {
+          Col = 250;
+        } else {
+          Col = 0;
         }
-        else{
-          Color = 0; // this block can't walk 
-        }
-        
-        fill(Color);
-        strokeWeight(2);
+        fill(Col);
         rect(i*X, j*Y, X, Y);
-        strokeWeight(0);
       }
     }
-
   }
 
   int getMaxX() {
@@ -101,7 +79,6 @@ class World {
     maxY = block.length;
     return maxY;
   }
-  
   boolean getMap(int X, int Y) {
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
@@ -109,158 +86,180 @@ class World {
 
     return(boolean(int(block[X])));
   }
-  
-  void blockWhite(){
-    // contains row and column that the robot can walk 
-    for(int i=0; i<maxX; i++){
-      for(int j=0; j<maxY; j++){
-        if(this.getMap(i,j)){
-          rowsWhite.append(i);
-          colsWhite.append(j);
+}
+
+class Robot {
+  int direction;
+  int posiX, posiY;
+  int headPosX;
+  int headPosY;
+  int leftPosX;
+  int leftPosY;
+  int rightPosX;
+  int rightPosY;
+  Robot() {
+  }
+  void initialDraw(int posX, int posY) {
+    posiX = posX;
+    posiY = posY;
+    RB.draw();
+  }
+  void draw() {
+    if (direction == 0) {
+      RB.headUp();
+    } else if (direction ==1) {
+      RB.headRight();
+    } else if (direction ==2) {
+      RB.headDown();
+    } else if (direction ==3) {
+      RB.headLeft();
+    }
+
+
+    stroke(0, 0, 255);
+    strokeWeight(4);
+    line(headPosX, headPosY, leftPosX, leftPosY);
+    line(leftPosX, leftPosY, rightPosX, rightPosY);
+    line(rightPosX, rightPosY, headPosX, headPosY);
+    strokeWeight(2);
+    stroke(0);
+  }
+
+  void headUp() {
+    headPosX = int(600/WD.getMaxX()*posiX)+600/WD.getMaxX()/2;
+    headPosY =int(600/WD.getMaxY()*posiY);
+    leftPosX = int(600/WD.getMaxX()*posiX);
+    leftPosY = int(600/WD.getMaxY()*(posiY+1));
+    rightPosX = int(600/WD.getMaxX()*(posiX+1)); 
+    rightPosY = int (600/WD.getMaxY()*(posiY+1));
+  }
+  void headDown() {
+    headPosX = int((600/WD.getMaxX()*posiX)+600/WD.getMaxX()/2);
+    headPosY =int(600/WD.getMaxY()*(posiY+1));
+    leftPosX = int(600/WD.getMaxX()*posiX);
+    leftPosY = int(600/WD.getMaxY()*posiY);
+    rightPosX = int(600/WD.getMaxX()*(posiX+1)); 
+    rightPosY = int (600/WD.getMaxY()*posiY);
+  }
+
+  void headLeft() {
+    headPosX = int(600/WD.getMaxX()*(posiX+1));
+    headPosY =int(600/WD.getMaxY()*posiY+1);
+    leftPosX = int(600/WD.getMaxX()*(posiX));
+    leftPosY = int((600/WD.getMaxY()*posiY)+600/WD.getMaxX()/2);
+    rightPosX = int(600/WD.getMaxX()*(posiX+1)); 
+    rightPosY = int (600/WD.getMaxY()*(posiY+1));
+  }
+
+  void headRight() {
+    headPosX = int(600/WD.getMaxX()*posiX);
+    headPosY =int(600/WD.getMaxY()*posiY);
+    leftPosX = int(600/WD.getMaxX()*(posiX+1));
+    leftPosY = int((600/WD.getMaxY()*posiY)+600/WD.getMaxX()/2);
+    rightPosX = int(600/WD.getMaxX()*(posiX)); 
+    rightPosY = int (600/WD.getMaxY()*(posiY+1));
+  }
+  void turnLeft() {
+
+    if (direction == 0 ) {
+      direction = 3;
+    } else {
+      direction -= 1;
+    }
+  }
+
+  void turnRight() {
+    if (direction == 3 ) {
+      direction = 0;
+    } else {
+      direction += 1;
+    }
+  }
+
+  void move() {
+
+    if (direction == 0) {
+      if (posiY > 0) {
+        if (WD.getMap(posiX, posiY-1) == true) {
+          posiY -= 1;
+        }
+      }
+    } else if (direction ==1) {
+      if (posiX < WD.getMaxX()-1) {
+        if (WD.getMap(posiX+1, posiY) == true) {
+          posiX += 1;
+        }
+      }
+    } else if (direction ==2) {
+      if (posiX < WD.getMaxY()-1) {
+        if (WD.getMap(posiX, posiY+1) == true) {
+          posiY += 1;
+        }
+      } else if (direction ==3) {
+        if (posiX >0) {
+          if (WD.getMap(posiX-1, posiY) == true) {
+            posiX-= 1;
+          }
         }
       }
     }
   }
-  
-  int getRowWhite(int index){
-    return rowsWhite.get(index);
+  int getX(){
+    return(posiX);
   }
-  
-  int getColWhite(int index){
-    return colsWhite.get(index);
-  }
-  
-  int getSize(){
-    return size;
-  }
-  
-  void deleteList(int index){
-    rowsWhite.remove(index);
-    colsWhite.remove(index);
-    this.size -= 1;
-  }
-  
-}
-
-class Robot {
-  int posX, posY,  rand;
-  float direction;
-  public boolean hasPressedKey = false;
-  
-  Robot() {
-    rand = (int)random(world.getSize());
-    posX = world.getRowWhite(rand);
-    posY = world.getColWhite(rand);
-    world.deleteList(rand);
-    direction = radians(90);
-  }
-
-  void draw(){
-    
-    // find the center point of the block to be the center of triangle
-    int centerX = (int)((width/world.getMaxX() * (this.posX+1)) - (width/world.getMaxX() * (this.posX)))/2 + (width/world.getMaxX()*this.posX);
-    int centerY = (int)((height/world.getMaxY() * (this.posY+1)) - (height/world.getMaxY() * (this.posY)))/2 + (height/world.getMaxY()*this.posY);
-    
-    // set position of head triangle
-    float headPosX = centerX - 25 * (cos(direction+radians(0)));
-    float headPosY = centerY - 25 * (sin(direction+radians(0)));
-    
-    // set position of left triangle
-    float leftPosX = centerX - 32 * (cos(direction+radians(135)));
-    float leftPosY = centerY - 32 * (sin(direction+radians(135)));
-    
-    // set position of right triangle
-    float rightPosX = centerX - 32 * (cos(direction+radians(225)));
-    float rightPosY = centerY - 32 * (sin(direction+radians(225)));;
-    
-    fill(0,0,255);
-    triangle(headPosX, headPosY, leftPosX, leftPosY, rightPosX, rightPosY);
-  }
-
-  void move(){
-    if(hasPressedKey == false){
-      switch(keyCode){
-        // when pressed arrow button
-        
-        case UP:
-          // move forward
-          this.posY -= 1;
-          direction = radians(90);
-          break;
-          
-        case DOWN:
-          // move backward
-          this.posY += 1;
-          direction = radians(270);
-          break;
-          
-        case LEFT:
-          // move left
-          this.posX -= 1;
-          direction = radians(0);
-          break;
-          
-        case RIGHT:
-          // move right
-          this.posX += 1;
-          direction = radians(180);
-          break;
-      }  
-    }
+    int getY(){
+    return(posiY);
   }
 }
-
 class Target {
   int posX, posY;
-  int rand; // random index 
-  
-  Target(){
-    rand = (int)random(world.getSize());
-    posX = world.getRowWhite(rand);
-    posY = world.getColWhite(rand);
-    world.deleteList(rand);
+  boolean met(int X, int Y){
+    if(X == posX && Y == posY){
+    return true;
+    }else{
+    return false;
+    }
+    
+    
+        
   }
-  
-  void draw(){
-    fill(255,0,0);
-    polygon((600/world.getMaxX()*this.posX)+600/world.getMaxX()/2, (600/world.getMaxY()*this.posY)+600/world.getMaxY()/2, 600/world.getMaxX()/2.5, 8);
+  void draw(int posiX, int posiY) {
+    posX= posiX;
+    posY = posiY;
+    fill(255, 0, 0);
+    polygon((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2, (600/WD.getMaxY()*posY)+600/WD.getMaxY()/2, 600/WD.getMaxX()/2, 8);
+    fill(0);
   }
 
   int getPosX() {
-    return this.posX;
+    return posX;
   }
 
   int getPosY() {
-    return this.posY;
+    return posY;
   }
 }
 
-class Obstruction {
-  int row, col, size, rand;
-  
-  Obstruction(int sizeList){
-    rand = (int)random(sizeList);
-    row = world.getRowWhite(rand);
-    col = world.getColWhite(rand);
-    world.deleteList(rand);
-    size = 50;
+class InputProcessor {
+  String keyinput;
+  void control(String keyinputfx) {
+    if (keyinputfx == "w") {
+      RB.move();
+    } else if (keyinputfx == "d") {
+      RB.turnRight();
+    } else if (keyinputfx == "a") {
+      RB.turnLeft();
+    }
   }
+}
+void keyPressed() {
 
-  void draw(){
-    int posX = (int)(60*(this.row) + 5);
-    int posY = (int)(60*(this.col) + 5);
+    if (key == 'w') {
+      IP.control("w");
+    } else if (key == 'a') {
+      IP.control("a");
+    } else if (key == 'd') {
+      IP.control("d");
     
-    fill(131,105,83); // brown color
-    strokeWeight(2);
-    rect(posX, posY, size, size);
-    fill(0);
-    line(posX, posY, posX+size, posY+size);
-    line(posX, posY+size, posX+size, posY);
-    strokeWeight(1);
-  }
-
-  boolean hasBarrier(int row, int column){
-    // check that position has barrier or not
-    return true;
   }
 }
