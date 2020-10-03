@@ -1,12 +1,7 @@
-World WD = new World();
-Robot RB= new Robot();
-Target TG = new Target();
-InputProcessor IP = new InputProcessor();
-String[] Map;
-int i;
+World world;
 
 void polygon(float x, float y, float radius, int npoints) {
-  float angle = TWO_PI / npoints;
+  float angle = TWO_PI / npoints; //angle for edge corner from the center
   beginShape();
   for (float a = 0; a < TWO_PI; a += angle) {
     float sx = x + cos(a) * radius;
@@ -18,59 +13,86 @@ void polygon(float x, float y, float radius, int npoints) {
 
 void setup() {
   size(600, 600);
-  i = 0;
+  world = new World();
+  world.robot= new Robot();
+  world.target = new Target();
+  world.inputProcessor = new InputProcessor();
+  
+  world.getMaxX();
+  world.getMaxY();
+
 }
 
 void draw() {
-  WD.getMaxX();
-  WD.getMaxY();
-  TG.draw(3, 3);
-  if (TG.met(RB.getX(), RB.getY()) == true) {
-    background(250);
+  background(0);
+  world.draw();
+  world.robot.draw();
+  world.target.draw();
+  
+  if (world.target.met(world.robot.getX(), world.robot.getY()) == true) {
+    // when position of the robot is same as the target
+    background(250); // color : grey 
     textSize(60);
     text("You Won", 150, 280);
   }
-  else if (i> 0) {
-    background(0); 
-    WD.draw();
+}
 
+void keyPressed() {
+  switch(keyCode){
+    // when pressed arrow button
     
-    RB.draw();
-    TG.draw(3, 3);
-  }else {
-
-    background(0);
-    WD.draw();
-    RB.initialDraw(0, 0);
-
-
-    TG.draw(3, 3);
+    case UP:
+      // when pressed arrow up
+      world.inputProcessor.control('w');
+      break;
+    
+    case DOWN:
+      // when pressed arrow down
+      world.inputProcessor.control('s');
+      break;
+      
+    case LEFT:
+      // when pressed arrow left
+      world.inputProcessor.control('a');
+      break;
+      
+    case RIGHT:
+      // when pressed arrow right
+      world.inputProcessor.control('d');
+      break;
   }
-  i +=1;
+  
+  // when pressed w,s,a,d button
+  world.inputProcessor.control(key);
 }
 
 class World {
-  int maxX, maxY, Col;
-
-  //int[][] block;
+  int maxX, maxY;
+  Robot robot;
+  Target target;
+  InputProcessor inputProcessor;
+  String[] Map;
 
   void draw() {
-    int X= 600/maxX;
-    int Y= 600/maxY;
+    int X = width/maxX;
+    int Y = height/maxY;
+    int  colour;
     for (int i =0; i < (maxX ); i = i+1) {
       for (int j = 0; j < (maxY ); j = j+1) {
-        if (WD.getMap(i, j) == true) {
-          Col = 250;
-        } else {
-          Col = 0;
+        if (world.getMap(i, j) == true) {
+          colour = 250;
         }
-        fill(Col);
+        else {
+          colour = 0;
+        }
+        fill(colour);
         rect(i*X, j*Y, X, Y);
       }
     }
   }
 
   int getMaxX() {
+    // return horizontal block counts
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
     maxX = mapread.length;
@@ -78,48 +100,51 @@ class World {
   }
 
   int getMaxY() {
+    // return vertical block counts
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
     String[] block = split(mapread[Y], '-');
     maxY = block.length;
     return maxY;
   }
+  
   boolean getMap(int X, int Y) {
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
     String[] block = split(mapread[Y], '-');
-
     return(boolean(int(block[X])));
+  }
+  
+  boolean checkIsWhite(int blockX, int blockY){
+    return world.getMap(blockX, blockY);
   }
 }
 
 class Robot {
-  int direction;
-  int posiX, posiY;
-  int headPosX;
-  int headPosY;
-  int leftPosX;
-  int leftPosY;
-  int rightPosX;
-  int rightPosY;
-  Robot() {
+  int direction; // 0:headup 1:headright 2:headdown 3:headleft
+  int posX, posY;
+  int headPosX, headPosY;
+  int leftPosX, leftPosY;
+  int rightPosX, rightPosY;
+  
+  Robot() { 
+    posX = 3;
+    posY = 3;
   }
-  void initialDraw(int posX, int posY) {
-    posiX = posX;
-    posiY = posY;
-    RB.draw();
-  }
+  
   void draw() {
     if (direction == 0) {
-      RB.headUp();
-    } else if (direction ==1) {
-      RB.headRight();
-    } else if (direction ==2) {
-      RB.headDown();
-    } else if (direction ==3) {
-      RB.headLeft();
+      world.robot.headUp();
     }
-
+    else if (direction ==1) {
+      world.robot.headRight();
+    } 
+    else if (direction ==2) {
+      world.robot.headDown();
+    } 
+    else if (direction ==3) {
+      world.robot.headLeft();
+    }
 
     stroke(0, 0, 255);
     strokeWeight(4);
@@ -131,44 +156,46 @@ class Robot {
   }
 
   void headUp() {
-    headPosX = int(600/WD.getMaxX()*posiX)+600/WD.getMaxX()/2;
-    headPosY =int(600/WD.getMaxY()*posiY);
-    leftPosX = int(600/WD.getMaxX()*posiX);
-    leftPosY = int(600/WD.getMaxY()*(posiY+1));
-    rightPosX = int(600/WD.getMaxX()*(posiX+1)); 
-    rightPosY = int (600/WD.getMaxY()*(posiY+1));
+    headPosX = int(width/world.getMaxX()*posX)+width/world.getMaxX()/2;
+    headPosY =int(height/world.getMaxY()*posY);
+    leftPosX = int(width/world.getMaxX()*posX);
+    leftPosY = int(height/world.getMaxY()*(posY+1));
+    rightPosX = int(width/world.getMaxX()*(posX+1)); 
+    rightPosY = int(height/world.getMaxY()*(posY+1));
   }
+  
   void headDown() {
-    headPosX = int((600/WD.getMaxX()*posiX)+600/WD.getMaxX()/2);
-    headPosY =int(600/WD.getMaxY()*(posiY+1));
-    leftPosX = int(600/WD.getMaxX()*posiX);
-    leftPosY = int(600/WD.getMaxY()*posiY);
-    rightPosX = int(600/WD.getMaxX()*(posiX+1)); 
-    rightPosY = int (600/WD.getMaxY()*posiY);
+    headPosX = int((width/world.getMaxX()*posX)+width/world.getMaxX()/2);
+    headPosY =int(height/world.getMaxY()*(posY+1));
+    leftPosX = int(width/world.getMaxX()*posX);
+    leftPosY = int(height/world.getMaxY()*posY);
+    rightPosX = int(width/world.getMaxX()*(posX+1)); 
+    rightPosY = int (height/world.getMaxY()*posY);
   }
 
   void headLeft() {
-    headPosX = int(600/WD.getMaxX()*(posiX+1));
-    headPosY =int(600/WD.getMaxY()*posiY+1);
-    leftPosX = int(600/WD.getMaxX()*(posiX));
-    leftPosY = int((600/WD.getMaxY()*posiY)+600/WD.getMaxX()/2);
-    rightPosX = int(600/WD.getMaxX()*(posiX+1)); 
-    rightPosY = int (600/WD.getMaxY()*(posiY+1));
+    headPosX = int(width/world.getMaxX()*(posX+1));
+    headPosY =int(height/world.getMaxY()*posY+1);
+    leftPosX = int(width/world.getMaxX()*(posX));
+    leftPosY = int((height/world.getMaxY()*posY)+width/world.getMaxX()/2);
+    rightPosX = int(width/world.getMaxX()*(posX+1)); 
+    rightPosY = int (height/world.getMaxY()*(posY+1));
   }
 
   void headRight() {
-    headPosX = int(600/WD.getMaxX()*posiX);
-    headPosY =int(600/WD.getMaxY()*posiY);
-    leftPosX = int(600/WD.getMaxX()*(posiX+1));
-    leftPosY = int((600/WD.getMaxY()*posiY)+600/WD.getMaxX()/2);
-    rightPosX = int(600/WD.getMaxX()*(posiX)); 
-    rightPosY = int (600/WD.getMaxY()*(posiY+1));
+    headPosX = int(width/world.getMaxX()*posX);
+    headPosY =int(height/world.getMaxY()*posY);
+    leftPosX = int(width/world.getMaxX()*(posX+1));
+    leftPosY = int((height/world.getMaxY()*posY)+height/world.getMaxX()/2);
+    rightPosX = int(width/world.getMaxX()*(posX)); 
+    rightPosY = int (height/world.getMaxY()*(posY+1));
   }
+  
   void turnLeft() {
-
-    if (direction == 0 ) {
+    if (direction == 0) {
       direction = 3;
-    } else {
+    } 
+    else {
       direction -= 1;
     }
   }
@@ -176,63 +203,79 @@ class Robot {
   void turnRight() {
     if (direction == 3 ) {
       direction = 0;
-    } else {
+    } 
+    else {
       direction += 1;
     }
   }
 
   void move() {
 
-    if (direction == 0) {
-      if (posiY > 0) {
-        if (WD.getMap(posiX, posiY-1) == true) {
-          posiY -= 1;
-        }
-      }
-    } else if (direction ==1) {
-      if (posiX < WD.getMaxX()-1) {
-        if (WD.getMap(posiX+1, posiY) == true) {
-          posiX += 1;
-        }
-      }
-    } else if (direction ==2) {
-      if (posiX < WD.getMaxY()-1) {
-        if (WD.getMap(posiX, posiY+1) == true) {
-          posiY += 1;
-        }
-      }
-    } else if (direction ==3) {
-      if (posiX > 0) {
-        if (WD.getMap(posiX-1, posiY) == true) {
-          posiX-= 1;
-        }
-      }
+    if (direction == 0 && !this.isAtTopEdge() && world.checkIsWhite(posX, posY-1) ) {
+      posY -= 1;
+    } 
+    else if (direction ==1 && !this.isAtRightEdge(world.getMaxX()) && world.checkIsWhite(posX+1, posY) ) {
+      posX += 1;
+    } 
+    else if (direction ==2 && !this.isAtBottomEdge(world.getMaxY()) && world.checkIsWhite(posX, posY+1)) {
+      posY += 1;
+    } 
+    else if (direction ==3 && !this.isAtLeftEdge() && world.checkIsWhite(posX-1, posY) ) {
+      posX-= 1;
     }
+    
   }
   int getX() {
-    return(posiX);
+    return(posX);
   }
+  
   int getY() {
-    return(posiY);
+    return(posY);
+  }
+  
+  boolean isAtTopEdge(){
+      return posY <= 0;
+  }
+  
+  boolean isAtBottomEdge(int worldMaxY){
+      return posY >= worldMaxY-1;
+  }
+  
+  boolean isAtLeftEdge(){
+      return posX <= 0;
+  }
+  
+  boolean isAtRightEdge(int worldMaxX){
+    return posX >= worldMaxX-1;
   }
 }
-class Target {
 
+class Target {
   int posX, posY;
+  
+  Target(){
+    posX = 6;
+    posY = 6;
+  }
+  
   boolean met(int X, int Y) {
+    // check the target met the robot or not
+    
     if (X == posX && Y == posY) {
       return true;
-      
-    } else {
-      
+    } 
+    else {
       return false;
     }
   }
-  void draw(int posiX, int posiY) {
-    posX= posiX;
-    posY = posiY;
+  
+  void draw() {
     fill(255, 0, 0);
-    polygon((600/WD.getMaxX()*posX)+600/WD.getMaxX()/2, (600/WD.getMaxY()*posY)+600/WD.getMaxY()/2, 600/WD.getMaxX()/2, 8);
+    float actualPosX = (width/world.getMaxX()*posX)+width/world.getMaxX()/2;
+    float actualPosY = (height/world.getMaxY()*posY)+height/world.getMaxY()/2;
+    float radius =  width/world.getMaxX()/2;
+    int cornerNumber = 8; //octagon 
+    polygon(actualPosX, actualPosY, radius, cornerNumber) ;
     fill(0);
   }
 
@@ -246,24 +289,16 @@ class Target {
 }
 
 class InputProcessor {
-  String keyinput;
-  void control(String keyinputfx) {
-    if (keyinputfx == "w") {
-      RB.move();
-    } else if (keyinputfx == "d") {
-      RB.turnRight();
-    } else if (keyinputfx == "a") {
-      RB.turnLeft();
+  
+  void control(char keyInput) {
+    if (keyInput == 'w') {
+      world.robot.move();
+    } 
+    else if (keyInput == 'd') {
+      world.robot.turnRight();
+    } 
+    else if (keyInput == 'a') {
+      world.robot.turnLeft();
     }
-  }
-}
-void keyPressed() {
-
-  if (key == 'w') {
-    IP.control("w");
-  } else if (key == 'a') {
-    IP.control("a");
-  } else if (key == 'd') {
-    IP.control("d");
   }
 }
