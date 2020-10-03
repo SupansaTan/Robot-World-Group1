@@ -1,6 +1,6 @@
 World world;
 
-void polygon(float x, float y, float radius, int npoints) {
+void polygon(float x, float y, float radius, int npoints) {  // method for make any shape
   float angle = TWO_PI / npoints; //angle for edge corner from the center
   beginShape();
   for (float a = 0; a < TWO_PI; a += angle) {
@@ -15,7 +15,16 @@ void setup() {
   size(600, 600);
   world = new World();
   world.robot= new Robot();
-  world.target = new Target();
+  
+  int randX = (int)random(world.getMaxX()-1);
+  int randY = (int)random(world.getMaxY()-1);
+  
+  while(!world.checkIsWhite(randX, randY) || (randX == 0 && randY == 0)){  // if the result of random is blackblock or (0,0)
+     randX = (int)random(world.getMaxX()-1);     // random the new one
+     randY = (int)random(world.getMaxY()-1);
+  }
+  
+  world.target = new Target(randX, randY);
   world.inputProcessor = new InputProcessor();
   
   world.getMaxX();
@@ -29,7 +38,7 @@ void draw() {
   world.robot.draw();
   world.target.draw();
   
-  if (world.target.met(world.robot.getX(), world.robot.getY()) == true) {
+  if (world.target.isOnTarget(world.robot.getX(), world.robot.getY()) == true) {
     // when position of the robot is same as the target
     background(250); // color : grey 
     textSize(60);
@@ -45,11 +54,6 @@ void keyPressed() {
       // when pressed arrow up
       world.inputProcessor.control('w');
       break;
-    
-    case DOWN:
-      // when pressed arrow down
-      world.inputProcessor.control('s');
-      break;
       
     case LEFT:
       // when pressed arrow left
@@ -62,7 +66,7 @@ void keyPressed() {
       break;
   }
   
-  // when pressed w,s,a,d button
+  // when pressed w,a,d button
   world.inputProcessor.control(key);
 }
 
@@ -128,8 +132,8 @@ class Robot {
   int rightPosX, rightPosY;
   
   Robot() { 
-    posX = 3;
-    posY = 3;
+    posX = 0;
+    posY = 0;
   }
   
   void draw() {
@@ -253,15 +257,16 @@ class Robot {
 class Target {
   int posX, posY;
   
-  Target(){
-    posX = 6;
-    posY = 6;
+  Target(int x, int y){
+    posX = x;
+    posY = y;
   }
   
-  boolean met(int X, int Y) {
+  boolean isOnTarget(int X, int Y) {
     // check the target met the robot or not
     
     if (X == posX && Y == posY) {
+      // when the robot is on target
       return true;
     } 
     else {
@@ -292,12 +297,15 @@ class InputProcessor {
   
   void control(char keyInput) {
     if (keyInput == 'w') {
+      // move forward
       world.robot.move();
     } 
     else if (keyInput == 'd') {
+      // turn right
       world.robot.turnRight();
     } 
     else if (keyInput == 'a') {
+      // turn left
       world.robot.turnLeft();
     }
   }
