@@ -2,7 +2,7 @@ Map
 Max row : 10,  Max column : 10
 
 Robot
-Row : 3,  Column : 3
+Row : 0,  Column : 3
 
 Target
-Row : 4,  Column : 5
+Row : 0,  Column : 7

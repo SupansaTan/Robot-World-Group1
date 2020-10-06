@@ -44,6 +44,9 @@ void draw() {
     background(250); // color : grey 
     textSize(60);
     text("You Won", 150, 280);
+    noLoop();
+ 
+   
   }
 }
 
@@ -100,6 +103,7 @@ class World {
   }
   
   void saveFile(String name){
+      PrintWriter output;
       output = createWriter(name);
       output.println("Map");
       output.println("Max row : " + world.getMaxX() + ",  Max column : "  + world.getMaxY());
@@ -327,4 +331,3 @@ class InputProcessor {
     }
   }
 }
-PrintWriter output;
