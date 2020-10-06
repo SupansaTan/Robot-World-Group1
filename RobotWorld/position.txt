@@ -1,0 +1,8 @@
+Map
+Max row : 10,  Max column : 10
+
+Robot
+Row : 2,  Column : 3
+
+Target
+Row : 2,  Column : 6

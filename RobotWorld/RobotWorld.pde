@@ -16,6 +16,7 @@ void setup() {
   world = new World();
   world.robot= new Robot();
   
+  
   int randX = (int)random(world.getMaxX()-1);
   int randY = (int)random(world.getMaxY()-1);
   
@@ -65,9 +66,12 @@ void keyPressed() {
       world.inputProcessor.control('d');
       break;
   }
+  if (key == 's'){
+    world.saveFile("position.txt");}
+  else {
+    // when pressed w,a,d button
+  world.inputProcessor.control(key);}
   
-  // when pressed w,a,d button
-  world.inputProcessor.control(key);
 }
 
 class World {
@@ -93,6 +97,19 @@ class World {
         rect(i*X, j*Y, X, Y);
       }
     }
+  }
+  
+  void saveFile(String name){
+      output = createWriter(name);
+      output.println("Map");
+      output.println("Max row : " + world.getMaxX() + ",  Max column : "  + world.getMaxY());
+      output.println("\nRobot");
+      output.println("Row : " + world.robot.getX() + ",  Column : " + world.robot.getY());
+      output.println("\nTarget");
+      output.println("Row : " + world.target.getPosX() + ",  Column : " + world.target.getPosY());
+      output.flush();
+      output.close();
+    
   }
 
   int getMaxX() {
@@ -310,3 +327,4 @@ class InputProcessor {
     }
   }
 }
+PrintWriter output;
