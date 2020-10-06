@@ -39,7 +39,7 @@ void draw() {
   world.robot.draw();
   world.target.draw();
   
-  if (world.target.isOnTarget(world.robot.getX(), world.robot.getY()) == true) {
+  if (world.target.met(world.robot.getX(), world.robot.getY()) == true) {
     // when position of the robot is same as the target
     background(250); // color : grey 
     textSize(60);
@@ -279,7 +279,7 @@ class Target {
     posY = y;
   }
   
-  boolean isOnTarget(int X, int Y) {
+  boolean met(int X, int Y) {
     // check the target met the robot or not
     
     if (X == posX && Y == posY) {
