@@ -1,4 +1,6 @@
 World world;
+int[][] data = new int[4][2];
+boolean load = true;
 
 void polygon(float x, float y, float radius, int npoints) {  // method for make any shape
   float angle = TWO_PI / npoints; //angle for edge corner from the center
@@ -12,9 +14,11 @@ void polygon(float x, float y, float radius, int npoints) {  // method for make 
 }
 
 void setup() {
+  
+  readfile();
   size(600, 600);
   world = new World();
-  world.robot= new Robot();
+  
   
   
   int randX = (int)random(world.getMaxX()-1);
@@ -24,13 +28,44 @@ void setup() {
      randX = (int)random(world.getMaxX()-1);     // random the new one
      randY = (int)random(world.getMaxY()-1);
   }
+     world.robot= new Robot(0,0,0);
+     world.target = new Target(randX, randY);
+ 
   
-  world.target = new Target(randX, randY);
-  world.inputProcessor = new InputProcessor();
   
-  world.getMaxX();
-  world.getMaxY();
+    world.inputProcessor = new InputProcessor();
+  
+    world.getMaxX();
+    world.getMaxY();
 
+}
+
+  void readfile(){
+  BufferedReader reader = createReader("position.txt");
+  String line = null;
+  int i = 0;
+  try {
+    while ((line = reader.readLine()) != null) {
+        String[] pieces = split(line,",");
+        data[i][0] = int(pieces[0]);
+        data[i][1] = int(pieces[1]);
+        println(data[i][0]);
+        println(data[i][1]);
+        i++;
+      }
+    reader.close();
+  }
+  catch (NullPointerException e) {
+    e.printStackTrace();
+    load = false;
+  }
+  catch (IOException e) {
+    e.printStackTrace();
+    load = false;
+  }
+  if(i != 4){
+    load = false;
+  }
 }
 
 void draw() {
@@ -74,6 +109,13 @@ void keyPressed() {
   else {
     // when pressed w,a,d button
   world.inputProcessor.control(key);}
+  if (key == 'l'){
+  
+     world.robot= new Robot(data[1][0],data[1][1],data[3][0]);
+     world.target = new Target(data[2][0],data[2][1]);
+  
+  }
+  
   
 }
 
@@ -105,12 +147,10 @@ class World {
   void saveFile(String name){
       PrintWriter output;
       output = createWriter(name);
-      output.println("Map");
-      output.println("Max row : " + world.getMaxX() + ",  Max column : "  + world.getMaxY());
-      output.println("\nRobot");
-      output.println("Row : " + world.robot.getX() + ",  Column : " + world.robot.getY());
-      output.println("\nTarget");
-      output.println("Row : " + world.target.getPosX() + ",  Column : " + world.target.getPosY());
+      output.println(world.getMaxX() + ","  + world.getMaxY());
+      output.println(world.robot.getX() + "," + world.robot.getY());
+      output.println(world.target.getPosX() + "," + world.target.getPosY());
+      output.println(world.robot.direction + ","+0);
       output.flush();
       output.close();
     
@@ -152,9 +192,10 @@ class Robot {
   int leftPosX, leftPosY;
   int rightPosX, rightPosY;
   
-  Robot() { 
-    posX = 0;
-    posY = 0;
+  Robot(int px,int py,int di) { 
+    posX = px;
+    posY = py;
+    direction = di;
   }
   
   void draw() {
