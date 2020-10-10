@@ -86,35 +86,7 @@ void draw() {
 }
 
 void keyPressed() {
-  switch(keyCode){
-    // when pressed arrow button
-    
-    case UP:
-      // when pressed arrow up
-      world.inputProcessor.control('w');
-      break;
-      
-    case LEFT:
-      // when pressed arrow left
-      world.inputProcessor.control('a');
-      break;
-      
-    case RIGHT:
-      // when pressed arrow right
-      world.inputProcessor.control('d');
-      break;
-  }
-  if (key == 's'){
-    world.saveFile("position.txt");}
-  else {
-    // when pressed w,a,d button
-  world.inputProcessor.control(key);}
-  if (key == 'l'){
-  
-     world.robot= new Robot(data[1][0],data[1][1],data[3][0]);
-     world.target = new Target(data[2][0],data[2][1]);
-  
-  }
+  world.inputProcessor.control();
   
   
 }
@@ -357,18 +329,35 @@ class Target {
 
 class InputProcessor {
   
-  void control(char keyInput) {
-    if (keyInput == 'w') {
-      // move forward
+  void control() {
+  switch(keyCode){
+    // when pressed arrow button
+    
+    case UP:
+      // when pressed arrow up
       world.robot.move();
-    } 
-    else if (keyInput == 'd') {
-      // turn right
-      world.robot.turnRight();
-    } 
-    else if (keyInput == 'a') {
-      // turn left
+      break;
+      
+    case LEFT:
+      // when pressed arrow left
       world.robot.turnLeft();
-    }
+      break;
+      
+    case RIGHT:
+      // when pressed arrow right
+      world.robot.turnRight();
+      break;
   }
+  if (key == 's'){
+    world.saveFile("position.txt");
+  }
+  if (key == 'l'){
+  
+     world.robot= new Robot(data[1][0],data[1][1],data[3][0]);
+     world.target = new Target(data[2][0],data[2][1]);
+  
+  }
+  
+  
+}
 }
