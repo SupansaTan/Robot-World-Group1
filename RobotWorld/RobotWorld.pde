@@ -1,5 +1,5 @@
 World world;
-int[][] data = new int[4][2];
+int[][] info = new int[4][2];
 boolean load = true;
 
 void polygon(float x, float y, float radius, int npoints) {  // method for make any shape
@@ -18,9 +18,7 @@ void setup() {
   readfile();
   size(600, 600);
   world = new World();
-  
-  
-  
+    
   int randX = (int)random(world.getMaxX()-1);
   int randY = (int)random(world.getMaxY()-1);
   
@@ -28,29 +26,26 @@ void setup() {
      randX = (int)random(world.getMaxX()-1);     // random the new one
      randY = (int)random(world.getMaxY()-1);
   }
-     world.robot= new Robot(0,0,0);
-     world.target = new Target(randX, randY);
- 
-  
-  
+    world.robot= new Robot(0,0,0);
+    world.target = new Target(randX, randY);
+   
     world.inputProcessor = new InputProcessor();
   
     world.getMaxX();
     world.getMaxY();
-
 }
 
-  void readfile(){
+  void readfile() {
   BufferedReader reader = createReader("position.txt");
   String line = null;
   int i = 0;
   try {
     while ((line = reader.readLine()) != null) {
         String[] pieces = split(line,",");
-        data[i][0] = int(pieces[0]);
-        data[i][1] = int(pieces[1]);
-        println(data[i][0]);
-        println(data[i][1]);
+        info[i][0] = int(pieces[0]);
+        info[i][1] = int(pieces[1]);
+        println(info[i][0]);
+        println(info[i][1]);
         i++;
       }
     reader.close();
@@ -79,16 +74,12 @@ void draw() {
     background(250); // color : grey 
     textSize(60);
     text("You Won", 150, 280);
-    noLoop();
- 
-   
+    noLoop();   
   }
 }
 
 void keyPressed() {
-  world.inputProcessor.control();
-  
-  
+  world.inputProcessor.control();  
 }
 
 class World {
@@ -124,8 +115,7 @@ class World {
       output.println(world.target.getPosX() + "," + world.target.getPosY());
       output.println(world.robot.direction + ","+0);
       output.flush();
-      output.close();
-    
+      output.close();    
   }
 
   int getMaxX() {
@@ -248,7 +238,6 @@ class Robot {
   }
 
   void move() {
-
     if (direction == 0 && !this.isAtTopEdge() && world.checkIsWhite(posX, posY-1) ) {
       posY -= 1;
     } 
@@ -291,7 +280,7 @@ class Robot {
 class Target {
   int posX, posY;
   
-  Target(int x, int y){
+  Target(int x, int y) {
     posX = x;
     posY = y;
   }
@@ -330,34 +319,30 @@ class Target {
 class InputProcessor {
   
   void control() {
-  switch(keyCode){
-    // when pressed arrow button
+    switch(keyCode) {
+      // when pressed arrow button
     
-    case UP:
-      // when pressed arrow up
-      world.robot.move();
-      break;
+      case UP:
+        // when pressed arrow up
+        world.robot.move();
+        break;
       
-    case LEFT:
-      // when pressed arrow left
-      world.robot.turnLeft();
-      break;
+      case LEFT:
+        // when pressed arrow left
+        world.robot.turnLeft();
+        break;
       
-    case RIGHT:
-      // when pressed arrow right
-      world.robot.turnRight();
-      break;
+      case RIGHT:
+        // when pressed arrow right
+        world.robot.turnRight();
+        break;
+    }
+    if (key == 's') {
+      world.saveFile("position.txt");
+    }
+    if (key == 'l') {  
+       world.robot= new Robot(info[1][0],info[1][1],info[3][0]);
+       world.target = new Target(info[2][0],info[2][1]);  
+    }  
   }
-  if (key == 's'){
-    world.saveFile("position.txt");
-  }
-  if (key == 'l'){
-  
-     world.robot= new Robot(data[1][0],data[1][1],data[3][0]);
-     world.target = new Target(data[2][0],data[2][1]);
-  
-  }
-  
-  
-}
 }
