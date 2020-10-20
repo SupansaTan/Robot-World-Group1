@@ -41,8 +41,14 @@ void setup() {
     world.getMaxX();
     world.getMaxY();
 }
-
-  void readfile() { //Sikarin Read file and spilt "," and close file
+/////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: Read file and spilt "," and close file
+// 
+/////////////////////////////////////////////////////
+  void readfile() { 
   BufferedReader reader = createReader("position.txt");
   String line = null;
   int i = 0;
@@ -138,16 +144,30 @@ class World {
       output.flush();
       output.close();    
   }
+  /////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: Get number of string in array and return
+// 
+/////////////////////////////////////////////////////
 
-  int getMaxX() { //Sikarin Get number of string in array and return
+  int getMaxX() { 
     // return horizontal block counts
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
     maxX = mapread.length;
     return maxX;
   }
+    /////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description:Get number of string in list that already "," and "-"
+// 
+/////////////////////////////////////////////////////
 
-  int getMaxY() { //Sikarin Get number of string in list that already "," and "-"
+  int getMaxY() { 
     // return vertical block counts
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
@@ -155,8 +175,14 @@ class World {
     maxY = block.length;
     return maxY;
   }
-  
-  boolean getMap(int X, int Y) { // Sikarin Read file and retrun wanted block as boolean  
+      /////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: Read file and retrun wanted block as boolean  
+// 
+/////////////////////////////////////////////////////
+  boolean getMap(int X, int Y) { 
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
     String[] block = split(mapread[Y], '-');
@@ -180,8 +206,14 @@ class Robot {
     posY = py;
     direction = di;
   }
-  
-  void draw() { // Sikarin draw three line to form triangle using another method
+        /////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: draw three line to form triangle using another method
+// 
+/////////////////////////////////////////////////////
+  void draw() { 
     if (direction == 0) {
       world.robot.headUp();
     }
@@ -203,8 +235,14 @@ class Robot {
     strokeWeight(2);
     stroke(0);
   }
-
-  void headUp() {//Sikarin Change value of treeline coordinate 
+/////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: Change value of treeline coordinate
+// 
+/////////////////////////////////////////////////////
+  void headUp() { 
     headPosX = int(width/world.getMaxX()*posX)+width/world.getMaxX()/2;
     headPosY =int(height/world.getMaxY()*posY);
     leftPosX = int(width/world.getMaxX()*posX);
@@ -212,8 +250,15 @@ class Robot {
     rightPosX = int(width/world.getMaxX()*(posX+1)); 
     rightPosY = int(height/world.getMaxY()*(posY+1));
   }
+  /////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: Change value of treeline coordinate
+// 
+/////////////////////////////////////////////////////
   
-  void headDown() {//Sikarin Change value of treeline coordinate 
+  void headDown() {
     headPosX = int((width/world.getMaxX()*posX)+width/world.getMaxX()/2);
     headPosY =int(height/world.getMaxY()*(posY+1));
     leftPosX = int(width/world.getMaxX()*posX);
@@ -221,8 +266,14 @@ class Robot {
     rightPosX = int(width/world.getMaxX()*(posX+1)); 
     rightPosY = int (height/world.getMaxY()*posY);
   }
-
-  void headLeft() {//Sikarin Change value of treeline coordinate 
+/////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: Change value of treeline coordinate
+// 
+/////////////////////////////////////////////////////
+  void headLeft() {
     headPosX = int(width/world.getMaxX()*(posX+1));
     headPosY =int(height/world.getMaxY()*posY+1);
     leftPosX = int(width/world.getMaxX()*(posX));
@@ -230,8 +281,15 @@ class Robot {
     rightPosX = int(width/world.getMaxX()*(posX+1)); 
     rightPosY = int (height/world.getMaxY()*(posY+1));
   }
+/////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: Change value of treeline coordinate
+// 
+/////////////////////////////////////////////////////
 
-  void headRight() {//Sikarin Change value of treeline coordinate 
+  void headRight() {
     headPosX = int(width/world.getMaxX()*posX);
     headPosY =int(height/world.getMaxY()*posY);
     leftPosX = int(width/world.getMaxX()*(posX+1));
@@ -239,8 +297,14 @@ class Robot {
     rightPosX = int(width/world.getMaxX()*(posX)); 
     rightPosY = int (height/world.getMaxY()*(posY+1));
   }
-  
-  void turnLeft() {//Sikarin Change value of direction
+  /////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: Change value of direction
+// 
+/////////////////////////////////////////////////////
+  void turnLeft() {
     if (direction == 0) {
       direction = 3;
     } 
@@ -248,8 +312,15 @@ class Robot {
       direction -= 1;
     }
   }
+  /////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: Change value of direction
+// 
+/////////////////////////////////////////////////////
 
-  void turnRight() {//Sikarin Change value of direction
+  void turnRight() {
     if (direction == 3 ) {
       direction = 0;
     } 
@@ -257,8 +328,14 @@ class Robot {
       direction += 1;
     }
   }
-
-  void move() {//Sikarin Change value of row or column of robot by 1
+/////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: CChange value of row or column of robot by 1
+// 
+/////////////////////////////////////////////////////
+  void move() {
     if (direction == 0 && !this.isAtTopEdge() && world.checkIsWhite(posX, posY-1) ) {
       posY -= 1;
     } 
@@ -305,9 +382,15 @@ class Target {
     posX = x;
     posY = y;
   }
+  /////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: Ccheck the target met the robot or not by using row and column
+// 
+/////////////////////////////////////////////////////
   
-  boolean met(int X, int Y) { 
-    //Sikarin check the target met the robot or not by using row and column 
+  boolean met(int X, int Y) {  
     
     if (X == posX && Y == posY) {
       // when the robot is on target
@@ -317,8 +400,14 @@ class Target {
       return false;
     }
   }
-  
-  void draw() { //Sikarin find coordinate and draw polygon 
+/////////////////////////////////////////////////////
+//
+// Programmer: Sikarin
+//
+// Description: find coordinate and draw polygon 
+// 
+/////////////////////////////////////////////////////
+  void draw() { 
     fill(255, 0, 0);
     float actualPosX = (width/world.getMaxX()*posX)+width/world.getMaxX()/2;
     float actualPosY = (height/world.getMaxY()*posY)+height/world.getMaxY()/2;
