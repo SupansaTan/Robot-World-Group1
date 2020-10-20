@@ -1,7 +1,6 @@
 World world;
 int[][] info = new int[4][2];
 boolean load = true;
-
 /////////////////////////////////////////////////////
 //
 // Programmer: Thanakrit-Bank
@@ -10,7 +9,6 @@ boolean load = true;
 // to use you must input parameter position x, position y, radius and amount point of angle you want.
 // 
 /////////////////////////////////////////////////////
-
 void polygon(float x, float y, float radius, int npoints) {  // method for make any shape
   float angle = TWO_PI / npoints; //angle for edge corner from the center
   beginShape();
@@ -44,8 +42,7 @@ void setup() {
     world.getMaxY();
 }
 
-  void readfile() {     //:Phoka
-                        //Description : read file form "position.txt" for load file or can continue game.
+  void readfile() { //Sikarin Read file and spilt "," and close file
   BufferedReader reader = createReader("position.txt");
   String line = null;
   int i = 0;
@@ -72,7 +69,6 @@ void setup() {
     load = false;
   }
 }
-
 /////////////////////////////////////////////////////
 //
 // Programmer: Thanakrit-Bank
@@ -95,7 +91,6 @@ void draw() {
     noLoop();   
   }
 }
-
 /////////////////////////////////////////////////////
 //
 // Programmer: Thanakrit-Bank
@@ -133,8 +128,7 @@ class World {
     }
   }
   
-  void saveFile(String name){ //:Phoka
-                        //Description : save data of position robot and save to file name "position.txt". 
+  void saveFile(String name){
       PrintWriter output;
       output = createWriter(name);
       output.println(world.getMaxX() + ","  + world.getMaxY());
@@ -145,7 +139,7 @@ class World {
       output.close();    
   }
 
-  int getMaxX() {
+  int getMaxX() { //Sikarin Get number of string in array and return
     // return horizontal block counts
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
@@ -153,7 +147,7 @@ class World {
     return maxX;
   }
 
-  int getMaxY() {
+  int getMaxY() { //Sikarin Get number of string in list that already "," and "-"
     // return vertical block counts
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
@@ -162,7 +156,7 @@ class World {
     return maxY;
   }
   
-  boolean getMap(int X, int Y) {
+  boolean getMap(int X, int Y) { // Sikarin Read file and retrun wanted block as boolean  
     Map = loadStrings("Map.txt");
     String[] mapread = split(Map[0], ',');
     String[] block = split(mapread[Y], '-');
@@ -187,7 +181,7 @@ class Robot {
     direction = di;
   }
   
-  void draw() {
+  void draw() { // Sikarin draw three line to form triangle using another method
     if (direction == 0) {
       world.robot.headUp();
     }
@@ -210,7 +204,7 @@ class Robot {
     stroke(0);
   }
 
-  void headUp() {
+  void headUp() {//Sikarin Change value of treeline coordinate 
     headPosX = int(width/world.getMaxX()*posX)+width/world.getMaxX()/2;
     headPosY =int(height/world.getMaxY()*posY);
     leftPosX = int(width/world.getMaxX()*posX);
@@ -219,7 +213,7 @@ class Robot {
     rightPosY = int(height/world.getMaxY()*(posY+1));
   }
   
-  void headDown() {
+  void headDown() {//Sikarin Change value of treeline coordinate 
     headPosX = int((width/world.getMaxX()*posX)+width/world.getMaxX()/2);
     headPosY =int(height/world.getMaxY()*(posY+1));
     leftPosX = int(width/world.getMaxX()*posX);
@@ -228,7 +222,7 @@ class Robot {
     rightPosY = int (height/world.getMaxY()*posY);
   }
 
-  void headLeft() {
+  void headLeft() {//Sikarin Change value of treeline coordinate 
     headPosX = int(width/world.getMaxX()*(posX+1));
     headPosY =int(height/world.getMaxY()*posY+1);
     leftPosX = int(width/world.getMaxX()*(posX));
@@ -237,7 +231,7 @@ class Robot {
     rightPosY = int (height/world.getMaxY()*(posY+1));
   }
 
-  void headRight() {
+  void headRight() {//Sikarin Change value of treeline coordinate 
     headPosX = int(width/world.getMaxX()*posX);
     headPosY =int(height/world.getMaxY()*posY);
     leftPosX = int(width/world.getMaxX()*(posX+1));
@@ -246,7 +240,7 @@ class Robot {
     rightPosY = int (height/world.getMaxY()*(posY+1));
   }
   
-  void turnLeft() {
+  void turnLeft() {//Sikarin Change value of direction
     if (direction == 0) {
       direction = 3;
     } 
@@ -255,7 +249,7 @@ class Robot {
     }
   }
 
-  void turnRight() {
+  void turnRight() {//Sikarin Change value of direction
     if (direction == 3 ) {
       direction = 0;
     } 
@@ -264,7 +258,7 @@ class Robot {
     }
   }
 
-  void move() {
+  void move() {//Sikarin Change value of row or column of robot by 1
     if (direction == 0 && !this.isAtTopEdge() && world.checkIsWhite(posX, posY-1) ) {
       posY -= 1;
     } 
@@ -312,8 +306,8 @@ class Target {
     posY = y;
   }
   
-  boolean met(int X, int Y) {
-    // check the target met the robot or not
+  boolean met(int X, int Y) { 
+    //Sikarin check the target met the robot or not by using row and column 
     
     if (X == posX && Y == posY) {
       // when the robot is on target
@@ -324,7 +318,7 @@ class Target {
     }
   }
   
-  void draw() {
+  void draw() { //Sikarin find coordinate and draw polygon 
     fill(255, 0, 0);
     float actualPosX = (width/world.getMaxX()*posX)+width/world.getMaxX()/2;
     float actualPosY = (height/world.getMaxY()*posY)+height/world.getMaxY()/2;
@@ -344,7 +338,7 @@ class Target {
 }
 
 class InputProcessor {
-/////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////
 //
 // Programmer: Thanakrit-Bank
 //
@@ -352,7 +346,6 @@ class InputProcessor {
 // and if the key is 's' will save the file in position.txt and if key is 'l' will load the file.
 // 
 /////////////////////////////////////////////////////
-  
   void control() {
     switch(keyCode) {
       // when pressed arrow button
