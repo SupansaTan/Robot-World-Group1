@@ -35,7 +35,8 @@ void setup() {
     world.getMaxY();
 }
 
-  void readfile() {
+  void readfile() {     //:Phoka
+                        //Description : read file form "position.txt" for load file or can continue game.
   BufferedReader reader = createReader("position.txt");
   String line = null;
   int i = 0;
@@ -107,7 +108,8 @@ class World {
     }
   }
   
-  void saveFile(String name){
+  void saveFile(String name){ //:Phoka
+                        //Description : save data of position robot and save to file name "position.txt". 
       PrintWriter output;
       output = createWriter(name);
       output.println(world.getMaxX() + ","  + world.getMaxY());
