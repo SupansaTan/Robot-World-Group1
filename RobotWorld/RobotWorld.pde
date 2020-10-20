@@ -2,6 +2,15 @@ World world;
 int[][] info = new int[4][2];
 boolean load = true;
 
+/////////////////////////////////////////////////////
+//
+// Programmer: Thanakrit-Bank
+//
+// Description: This method can make any shape for example triangle rectangle octagon and etc
+// to use you must input parameter position x, position y, radius and amount point of angle you want.
+// 
+/////////////////////////////////////////////////////
+
 void polygon(float x, float y, float radius, int npoints) {  // method for make any shape
   float angle = TWO_PI / npoints; //angle for edge corner from the center
   beginShape();
@@ -64,6 +73,14 @@ void setup() {
   }
 }
 
+/////////////////////////////////////////////////////
+//
+// Programmer: Thanakrit-Bank
+//
+// Description: This method will draw world, robot and target and if the robot met the target it will show text "You Won".
+// 
+/////////////////////////////////////////////////////
+
 void draw() {
   background(0);
   world.draw();
@@ -78,6 +95,14 @@ void draw() {
     noLoop();   
   }
 }
+
+/////////////////////////////////////////////////////
+//
+// Programmer: Thanakrit-Bank
+//
+// Description: This method will process the keypressed that called from control in class InputProcessor.
+// 
+/////////////////////////////////////////////////////
 
 void keyPressed() {
   world.inputProcessor.control();  
@@ -319,6 +344,14 @@ class Target {
 }
 
 class InputProcessor {
+/////////////////////////////////////////////////////
+//
+// Programmer: Thanakrit-Bank
+//
+// Description: This method will receive the input from key on the keyboard and then will process the robot move, turnLeft, turnRight method
+// and if the key is 's' will save the file in position.txt and if key is 'l' will load the file.
+// 
+/////////////////////////////////////////////////////
   
   void control() {
     switch(keyCode) {
