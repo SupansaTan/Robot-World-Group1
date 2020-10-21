@@ -1,6 +1,7 @@
 World world;
 int[][] info = new int[4][2];
 boolean load = true;
+
 /////////////////////////////////////////////////////
 //
 // Programmer: Thanakrit-Bank
@@ -189,6 +190,13 @@ class World {
     return(boolean(int(block[X])));
   }
   
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: check the block that color white or not? (the robot can walk pass white block) 
+  // 
+  /////////////////////////////////////////////////////
   boolean checkIsWhite(int blockX, int blockY){
     return world.getMap(blockX, blockY);
   }
@@ -266,6 +274,7 @@ class Robot {
     rightPosX = int(width/world.getMaxX()*(posX+1)); 
     rightPosY = int (height/world.getMaxY()*posY);
   }
+  
 /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -281,6 +290,7 @@ class Robot {
     rightPosX = int(width/world.getMaxX()*(posX+1)); 
     rightPosY = int (height/world.getMaxY()*(posY+1));
   }
+  
 /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -297,6 +307,7 @@ class Robot {
     rightPosX = int(width/world.getMaxX()*(posX)); 
     rightPosY = int (height/world.getMaxY()*(posY+1));
   }
+  
   /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -312,6 +323,7 @@ class Robot {
       direction -= 1;
     }
   }
+  
   /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -328,6 +340,7 @@ class Robot {
       direction += 1;
     }
   }
+  
 /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -350,26 +363,69 @@ class Robot {
     }
     
   }
+  
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: for get position x of the robot (row)
+  // 
+  /////////////////////////////////////////////////////
   int getX() {
     return(posX);
   }
   
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: for get position y of the robot (column)
+  // 
+  /////////////////////////////////////////////////////
   int getY() {
     return(posY);
   }
   
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: check head of robot is at top edge of widget or not?
+  // 
+  /////////////////////////////////////////////////////
   boolean isAtTopEdge(){
       return posY <= 0;
   }
   
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: check head of robot is at bottom edge of widget or not?
+  // 
+  /////////////////////////////////////////////////////
   boolean isAtBottomEdge(int worldMaxY){
       return posY >= worldMaxY-1;
   }
   
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: check head of robot is at left edge of widget or not?
+  // 
+  /////////////////////////////////////////////////////
   boolean isAtLeftEdge(){
       return posX <= 0;
   }
   
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: check head of robot is at right edge of widget or not?
+  // 
+  /////////////////////////////////////////////////////
   boolean isAtRightEdge(int worldMaxX){
     return posX >= worldMaxX-1;
   }
@@ -382,6 +438,7 @@ class Target {
     posX = x;
     posY = y;
   }
+  
   /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -400,6 +457,7 @@ class Target {
       return false;
     }
   }
+  
 /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -417,10 +475,24 @@ class Target {
     fill(0);
   }
 
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: for get position x of the target
+  // 
+  /////////////////////////////////////////////////////
   int getPosX() {
     return posX;
   }
 
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: for get position y of the target
+  // 
+  /////////////////////////////////////////////////////
   int getPosY() {
     return posY;
   }
