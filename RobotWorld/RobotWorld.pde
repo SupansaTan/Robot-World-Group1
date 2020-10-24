@@ -1,4 +1,5 @@
 World world;
+Flowchart flowchart;
 int[][] info = new int[4][2];
 boolean load = true;
 
@@ -26,6 +27,7 @@ void setup() {
   readfile();
   size(600, 600);
   world = new World();
+  flowchart = new Flowchart();
     
   int randX = (int)random(world.getMaxX()-1);
   int randY = (int)random(world.getMaxY()-1);
@@ -42,6 +44,7 @@ void setup() {
     world.getMaxX();
     world.getMaxY();
 }
+
 /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -76,6 +79,7 @@ void setup() {
     load = false;
   }
 }
+
 /////////////////////////////////////////////////////
 //
 // Programmer: Thanakrit-Bank
@@ -98,6 +102,7 @@ void draw() {
     noLoop();   
   }
 }
+
 /////////////////////////////////////////////////////
 //
 // Programmer: Thanakrit-Bank
@@ -145,6 +150,7 @@ class World {
       output.flush();
       output.close();    
   }
+  
   /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -160,6 +166,7 @@ class World {
     maxX = mapread.length;
     return maxX;
   }
+  
     /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -176,6 +183,7 @@ class World {
     maxY = block.length;
     return maxY;
   }
+  
       /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -214,6 +222,7 @@ class Robot {
     posY = py;
     direction = di;
   }
+  
         /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
@@ -243,7 +252,8 @@ class Robot {
     strokeWeight(2);
     stroke(0);
   }
-/////////////////////////////////////////////////////
+  
+////////////////////////////////////////////////
 //
 // Programmer: Sikarin
 //
@@ -258,6 +268,7 @@ class Robot {
     rightPosX = int(width/world.getMaxX()*(posX+1)); 
     rightPosY = int(height/world.getMaxY()*(posY+1));
   }
+  
   /////////////////////////////////////////////////////
 //
 // Programmer: Sikarin
