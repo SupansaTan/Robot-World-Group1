@@ -49,7 +49,6 @@ void setup() {
   
     world.getMaxX();
     world.getMaxY();
-
 }
 
 /////////////////////////////////////////////////////
@@ -234,21 +233,20 @@ class World {
         
         if (command.charAt(0) == '[')
         {
+          // if...else statement
           String[] statements = command.substring(1,command.length()-1).split(",");
           String condition = statements[0];
           String ifTrue = statements[1];
           String ifFalse = statements[2];
-          println("if run!!!!");
           
+          // do if...else statement
           if(this.executeCommand(condition))
           {
             this.executeCommand(ifTrue);
-            println("ifTrue run!!!!");
           }
           else
           {
             this.executeCommand(ifFalse);
-            println("ifFalse run!!!!");
           }
         }
         else
@@ -268,22 +266,22 @@ class World {
   /////////////////////////////////////////////////////
   boolean executeCommand(String cmd)
   {
-    if(cmd == "move()")
+    if(cmd.equals("move()"))
     {
       world.robot.move();
       return true;
     }
-    else if(cmd == "turnLeft()")
+    else if(cmd.equals("turnLeft()"))
     {
       world.robot.turnLeft();
       return true;
     }
-    else if(cmd == "turnRight()")
+    else if(cmd.equals("turnRight()"))
     {
       world.robot.turnRight();
       return true;
     }
-    else if(cmd == "isBlocked()")
+    else if(cmd.equals("isBlocked()"))
     {
       return world.robot.isBlocked();
     }
@@ -531,19 +529,19 @@ class Robot {
   /////////////////////////////////////////////////////
   boolean isBlocked()
   {
-    if(posY <= 0 && !world.checkIsWhite(posX, posY-1))
+    if(direction == 0 && (posY <= 0 || !world.checkIsWhite(posX, posY-1)))
     {
       return true;
     }
-    else if (posY >= world.getMaxY()-1 && !world.checkIsWhite(posX+1, posY))
+    else if (direction == 1 && (posY >= world.getMaxY()-1 || !world.checkIsWhite(posX+1, posY)))
     {
       return true;
     }
-    else if (posX <= 0 && !world.checkIsWhite(posX, posY+1))
+    else if (direction == 2 && (posX <= 0 || !world.checkIsWhite(posX, posY+1)))
     {
       return true;
     }
-    else if (posX >= world.getMaxX()-1 && !world.checkIsWhite(posX-1, posY))
+    else if (direction == 3 && (posX >= world.getMaxX()-1 || !world.checkIsWhite(posX-1, posY)))
     {
       return true;
     }
