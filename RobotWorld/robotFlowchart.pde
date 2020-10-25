@@ -28,8 +28,18 @@ class Flowchart
     // show all elements in flowchart
     for(int i=0; i< elements.getSize(); i++)
     {
-      println(elements.dequeue(i));
+      println(elements.getValue(i));
     }
+  }
+  
+  String getFlowchart()
+  {
+    return elements.dequeue();
+  }
+
+  int getSize()
+  {
+    return elements.getSize();
   }
 }
 
@@ -47,10 +57,15 @@ class ArrayQueue
     return queue.size();
   }
   
-  String dequeue(int index)
+  String getValue(int index)
+  {
+    return queue.get(index);
+  }
+  
+  String dequeue()
   {
     // remove an item from the queue (front)
-    return queue.get(index);
+    return queue.remove(0);
   }
   
   void enqueue(String item)

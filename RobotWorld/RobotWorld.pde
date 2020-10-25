@@ -28,7 +28,13 @@ void setup() {
   size(600, 600);
   world = new World();
   flowchart = new Flowchart();
-    
+  
+  // add statements in flowchart 
+  flowchart.add("move()");
+  flowchart.ifStatement("isBlocked()", "turnLeft()", "turnRight()");
+  flowchart.add("move()");
+  flowchart.render();
+  
   int randX = (int)random(world.getMaxX()-1);
   int randY = (int)random(world.getMaxY()-1);
   
@@ -43,6 +49,7 @@ void setup() {
   
     world.getMaxX();
     world.getMaxY();
+
 }
 
 /////////////////////////////////////////////////////
@@ -61,10 +68,8 @@ void setup() {
         String[] pieces = split(line,",");
         info[i][0] = int(pieces[0]);
         info[i][1] = int(pieces[1]);
-        println(info[i][0]);
-        println(info[i][1]);
         i++;
-      }
+    }
     reader.close();
   }
   catch (NullPointerException e) {
@@ -94,6 +99,8 @@ void draw() {
   world.robot.draw();
   world.target.draw();
   
+  world.getFlow(flowchart);
+  
   if (world.target.met(world.robot.getX(), world.robot.getY()) == true) {
     // when position of the robot is same as the target
     background(250); // color : grey 
@@ -101,6 +108,8 @@ void draw() {
     text("You Won", 150, 280);
     noLoop();   
   }
+  
+  //world.getFlow(flowchart);
 }
 
 /////////////////////////////////////////////////////
@@ -207,6 +216,78 @@ class World {
   /////////////////////////////////////////////////////
   boolean checkIsWhite(int blockX, int blockY){
     return world.getMap(blockX, blockY);
+  }
+  
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: get all command in flowchart
+  // 
+  /////////////////////////////////////////////////////
+  void getFlow(Flowchart flow)
+  {
+    for (int i=0; i < flow.getSize(); i++){
+      if(!(flow.elements == null))
+      {
+        String command = flow.getFlowchart();
+        
+        if (command.charAt(0) == '[')
+        {
+          String[] statements = command.substring(1,command.length()-1).split(",");
+          String condition = statements[0];
+          String ifTrue = statements[1];
+          String ifFalse = statements[2];
+          println("if run!!!!");
+          
+          if(this.executeCommand(condition))
+          {
+            this.executeCommand(ifTrue);
+            println("ifTrue run!!!!");
+          }
+          else
+          {
+            this.executeCommand(ifFalse);
+            println("ifFalse run!!!!");
+          }
+        }
+        else
+        {
+          this.executeCommand(command);
+        }
+      }
+    }
+  }
+  
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: execute the command from flowchart to control robot
+  // 
+  /////////////////////////////////////////////////////
+  boolean executeCommand(String cmd)
+  {
+    if(cmd == "move()")
+    {
+      world.robot.move();
+      return true;
+    }
+    else if(cmd == "turnLeft()")
+    {
+      world.robot.turnLeft();
+      return true;
+    }
+    else if(cmd == "turnRight()")
+    {
+      world.robot.turnRight();
+      return true;
+    }
+    else if(cmd == "isBlocked()")
+    {
+      return world.robot.isBlocked();
+    }
+    return false;
   }
 }
 
@@ -439,6 +520,37 @@ class Robot {
   /////////////////////////////////////////////////////
   boolean isAtRightEdge(int worldMaxX){
     return posX >= worldMaxX-1;
+  }
+  
+  /////////////////////////////////////////////////////
+  //
+  // Programmer: Supansa Tantulset
+  //
+  // Description: check font of the robot is can walk or not?
+  // 
+  /////////////////////////////////////////////////////
+  boolean isBlocked()
+  {
+    if(posY <= 0 && !world.checkIsWhite(posX, posY-1))
+    {
+      return true;
+    }
+    else if (posY >= world.getMaxY()-1 && !world.checkIsWhite(posX+1, posY))
+    {
+      return true;
+    }
+    else if (posX <= 0 && !world.checkIsWhite(posX, posY+1))
+    {
+      return true;
+    }
+    else if (posX >= world.getMaxX()-1 && !world.checkIsWhite(posX-1, posY))
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
 }
 
